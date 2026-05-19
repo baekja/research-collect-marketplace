@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "research-collect"
+version = "0.1.0"
+description = "firecrawl-mcp → pyzotero → zotero-mcp paper ingest pipeline"
+requires-python = ">=3.11"
+dependencies = [
+    "pyzotero>=1.5",
+    "pyyaml>=6.0",
+    "httpx>=0.24",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+]
+
+[project.scripts]
+research-collect = "research_collect.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["plugins/research-collect/skills/research-collect/scripts"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "integration: requires running Zotero desktop with Local API enabled",
+]
+addopts = "-m 'not integration'"

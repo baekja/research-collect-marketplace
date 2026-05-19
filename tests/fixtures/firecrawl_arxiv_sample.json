@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Seismic Behavior of Steel Coupling Beams",
+    "authors": ["Wei Zhang", "Ming Li", "Xiao Wang"],
+    "year": 2024,
+    "doi": "10.1016/j.engstruct.2024.117654",
+    "abstract": "This paper investigates the seismic performance of steel coupling beams under cyclic loading. Six full-scale specimens were tested."
+  },
+  {
+    "title": "Effects of Web Thickness on Rotation Capacity",
+    "authors": ["Junho Park", "Sangwon Kim"],
+    "year": 2023,
+    "doi": "",
+    "abstract": "We examined the rotation capacity of welded H-section beams across web thickness ratios."
+  },
+  {
+    "title": "Concrete Shear Wall Coupling Beam Database",
+    "authors": "Minsu Kim",
+    "year": 2022,
+    "abstract": "A database of 142 reinforced concrete coupling beam tests collected from the literature."
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "name": "baekja-research-tools",
+  "description": "Research workflow plugins for academic paper collection and analysis.",
+  "owner": {
+    "name": "Jang-Woon Baek",
+    "email": "baekjw@khu.ac.kr"
+  },
+  "plugins": [
+    {
+      "name": "research-collect",
+      "source": "./plugins/research-collect",
+      "description": "Pluggable-backend paper collection pipeline: search → normalize → Zotero register, with optional PDF auto-attachment via Unpaywall.",
+      "version": "0.1.0"
+    }
+  ]
+}
