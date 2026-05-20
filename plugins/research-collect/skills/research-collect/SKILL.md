@@ -1,6 +1,6 @@
 ---
 name: research-collect
-description: Use this skill when the user wants to collect academic papers from the web (arXiv, journal sites, search results) and register them in their Zotero library. Searches papers via the best available backend (firecrawl-mcp preferred, then exa-mcp, brave-search-mcp, or built-in web_search), normalizes metadata into Markdown with YAML frontmatter, and writes to Zotero in local or cloud mode (cloud mode auto-attaches PDFs via Unpaywall OA fallback). Triggers on Korean phrases like "논문 수집", "Zotero에 등록", "논문 정리", "참고문헌 모으기", and English phrases like "paper collection", "gather papers about X", "academic literature review", "import to Zotero". Also triggers when user mentions any of firecrawl, exa, brave-search, or Zotero in the context of academic research.
+description: Use this skill when the user wants to collect academic papers from the web (arXiv, journal sites, search results) and register them in their Zotero library. Searches papers via the best available backend (firecrawl-mcp preferred, then exa-mcp, brave-search-mcp, or built-in web_search), normalizes metadata into Markdown with YAML frontmatter, and writes to Zotero in local or cloud mode (cloud mode auto-attaches PDFs via Unpaywall OA fallback). Triggers on Korean phrases like "논문 수집", "Zotero에 등록", "논문 정리", "참고문헌 모으기", and English phrases like "paper collection", "gather papers about X", "academic literature review", "import to Zotero". Also triggers when user mentions any of firecrawl, exa, brave-search, or Zotero in the context of academic research. Additionally handles attach-only mode (PDF attachment to already-registered Zotero items via `python -m research_collect.attach_only`) for Korean phrases like "PDF 만 첨부", "조테로에 PDF 붙이기", "이미 등록된 논문에 PDF 추가" and English "attach PDFs to existing items", "PDF-only import".
 ---
 
 # research-collect
@@ -94,6 +94,33 @@ python -m research_collect \
 ```
 
 없으면 Step 2 의 stdout 출력 (`[mode: local|cloud]` 라인 + 카운트들) 만으로 사용자에게 보고한다.
+
+## Attach-only mode (existing items + PDF only)
+
+이미 Zotero 에 메타데이터가 등록되어 있는 item 에 PDF 만 첨부하는 별도 경로. 새 item 을 만들지 않으므로 dedup 문제도 발생하지 않는다. **cloud 모드 전용** — Zotero local API 는 attachment 업로드 자체가 불가능 (`references/zotero_local_limits.md` HTTP 표).
+
+입력 파일 (`data/attach_list.json`) 의 각 record:
+
+| 필드 | 필수 | 설명 |
+|------|------|------|
+| `item_key` | △ | Zotero item key. 있으면 lookup 생략 |
+| `doi` | △ | `item_key` 없으면 이걸로 `zot.items(q=DOI:…)` lookup |
+| `pdf_path` | △ | 로컬 PDF 경로 (가장 빠름) |
+| `pdf_url` | △ | 원격 PDF URL → `download_pdf` 로 받음 |
+
+(△ = `item_key` · `doi` 중 하나는 필수. `pdf_path` · `pdf_url` · DOI+`UNPAYWALL_EMAIL` 중 하나는 필요.)
+
+실행:
+
+```bash
+python -m research_collect.attach_only \
+    --items data/attach_list.json \
+    --pdf-dir data/pdfs
+```
+
+출력 카운터: `attached` · `not_found` (DOI lookup 실패) · `skipped` (PDF 소스 부재) · `invalid` (식별자 부재) · `failed` (`attachment_simple` 예외). local 모드로 실행 시 즉시 `ERROR: attach-only requires cloud mode …` + exit code 2 로 거부된다.
+
+샘플 입력 JSON: `examples/attach_list_sample.json`.
 
 ## Mode selection logic
 

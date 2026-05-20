@@ -95,6 +95,13 @@ class TestSkillMd:
         for backend in ("firecrawl", "exa", "brave", "web_search"):
             assert backend in text, f"SKILL.md must mention backend: {backend}"
 
+    def test_documents_attach_only_mode(self):
+        text = SKILL_MD.read_text()
+        assert "attach-only" in text.lower() or "attach only" in text.lower(), \
+            "SKILL.md must document attach-only mode"
+        assert "research_collect.attach_only" in text, \
+            "SKILL.md must show the attach_only module invocation"
+
 
 class TestScriptsLayout:
     def test_python_package_present(self):
@@ -102,11 +109,21 @@ class TestScriptsLayout:
         for mod in ("ingest", "normalize", "md_writer", "zotero_writer", "pdf_downloader"):
             assert (SCRIPTS_DIR / f"{mod}.py").exists(), f"missing: {mod}.py"
 
+    def test_attach_only_module_present(self):
+        assert (SCRIPTS_DIR / "attach_only.py").exists(), \
+            "missing attach_only.py (PDF-attachment entry point)"
+
     def test_references_present(self):
         for doc in ("zotero_local_limits.md", "unpaywall_setup.md", "search_backends.md"):
             path = REFERENCES_DIR / doc
             assert path.exists(), f"missing: {doc}"
             assert path.stat().st_size > 500, f"too short: {doc}"
+
+    def test_attach_list_sample_present(self):
+        sample = REPO_ROOT / "plugins" / "research-collect" / "skills" / \
+            "research-collect" / "examples" / "attach_list_sample.json"
+        assert sample.exists(), f"missing: {sample}"
+        json.loads(sample.read_text())  # must be valid JSON
 
 
 class TestInstallScript:

@@ -52,6 +52,16 @@ Claude Code 세션 안에서 자연어 또는 슬래시 커맨드:
 
 위 한 줄로 검색 → 메타정규화 → Zotero 등록 → (cloud 모드면) PDF 자동 첨부 까지 진행된다.
 
+### 이미 있는 item 에 PDF 만 첨부 (cloud 모드 전용)
+
+메타데이터는 이미 Zotero 에 등록되어 있고 PDF 만 일괄 첨부하고 싶을 때:
+
+```bash
+python -m research_collect.attach_only --items data/attach_list.json
+```
+
+각 record 는 `item_key` 또는 `doi` (식별자) + `pdf_path` 또는 `pdf_url` (소스) 조합. 자세한 스키마와 샘플은 `plugins/research-collect/skills/research-collect/examples/attach_list_sample.json` 참조. local 모드에서는 거부 (Zotero local API attachment 업로드 불가).
+
 ## 모드 차이 (요약)
 
 | 항목 | local | cloud |
