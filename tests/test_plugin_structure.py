@@ -182,9 +182,23 @@ class TestHooks:
         assert "hooks" in data
         assert "PreToolUse" in data["hooks"]
 
+    def test_hooks_json_matcher_is_string(self):
+        """Claude Code schema: matcher must be string, hooks must be array."""
+        data = json.loads(self.HOOKS_JSON.read_text())
+        entry = data["hooks"]["PreToolUse"][0]
+        assert isinstance(entry["matcher"], str), \
+            f"matcher must be string (tool-name regex), got: {type(entry['matcher']).__name__}"
+        assert isinstance(entry.get("hooks"), list), \
+            "matcher entry must contain a 'hooks' array (Claude Code schema)"
+        assert len(entry["hooks"]) >= 1
+        inner = entry["hooks"][0]
+        assert inner.get("type") == "command", \
+            f"hook type must be 'command', got: {inner.get('type')!r}"
+        assert "command" in inner
+
     def test_hooks_json_invokes_python_not_bash(self):
         data = json.loads(self.HOOKS_JSON.read_text())
-        cmd = data["hooks"]["PreToolUse"][0]["command"]
+        cmd = data["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
         assert cmd.startswith("python "), \
             f"hook command must start with 'python ' for cross-platform support, got: {cmd!r}"
         assert "check_env.py" in cmd
