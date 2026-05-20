@@ -1,6 +1,7 @@
 """Plugin과 Marketplace 구조 정합성 검증."""
 import json
 import os
+import sys
 from pathlib import Path
 import pytest
 import yaml
@@ -109,12 +110,25 @@ class TestScriptsLayout:
 
 
 class TestInstallScript:
-    def test_exists_and_executable(self):
-        path = REPO_ROOT / "plugins" / "research-collect" / "scripts" / "install.sh"
-        assert path.exists()
+    SH = REPO_ROOT / "plugins" / "research-collect" / "scripts" / "install.sh"
+    PS1 = REPO_ROOT / "plugins" / "research-collect" / "scripts" / "install.ps1"
+
+    @pytest.mark.skipif(sys.platform == "win32", reason="bash optional on Windows")
+    def test_sh_exists_and_valid(self):
+        assert self.SH.exists()
         import subprocess
-        r = subprocess.run(["bash", "-n", str(path)], capture_output=True)
+        r = subprocess.run(["bash", "-n", str(self.SH)], capture_output=True)
         assert r.returncode == 0, f"syntax error: {r.stderr.decode()}"
+
+    def test_ps1_exists(self):
+        assert self.PS1.exists(), \
+            f"missing PowerShell installer (Windows parity): {self.PS1}"
+
+    def test_ps1_registers_both_mcps(self):
+        text = self.PS1.read_text()
+        assert "claude mcp add firecrawl" in text
+        assert "claude mcp add zotero" in text
+        assert "pip install -e" in text
 
 
 class TestCommands:
@@ -140,21 +154,53 @@ class TestCommands:
 
 
 class TestHooks:
-    """Hooks — Task 8.5."""
+    """Hooks — cross-platform Python implementation."""
 
     HOOKS_JSON = REPO_ROOT / "plugins" / "research-collect" / "hooks" / "hooks.json"
-    CHECK_SH = REPO_ROOT / "plugins" / "research-collect" / "hooks" / "check_env.sh"
+    CHECK_PY = REPO_ROOT / "plugins" / "research-collect" / "hooks" / "check_env.py"
+    CHECK_SH_LEGACY = REPO_ROOT / "plugins" / "research-collect" / "hooks" / "check_env.sh"
 
     def test_hooks_json_valid(self):
         data = json.loads(self.HOOKS_JSON.read_text())
         assert "hooks" in data
         assert "PreToolUse" in data["hooks"]
 
-    def test_check_env_sh_syntax(self):
-        import subprocess
-        r = subprocess.run(["bash", "-n", str(self.CHECK_SH)], capture_output=True)
-        assert r.returncode == 0, f"syntax error: {r.stderr.decode()}"
+    def test_hooks_json_invokes_python_not_bash(self):
+        data = json.loads(self.HOOKS_JSON.read_text())
+        cmd = data["hooks"]["PreToolUse"][0]["command"]
+        assert cmd.startswith("python "), \
+            f"hook command must start with 'python ' for cross-platform support, got: {cmd!r}"
+        assert "check_env.py" in cmd
 
-    def test_check_env_sh_executable(self):
-        assert os.access(self.CHECK_SH, os.X_OK), \
-            f"not executable: {self.CHECK_SH}"
+    def test_check_env_py_exists_and_compiles(self):
+        assert self.CHECK_PY.exists(), f"missing: {self.CHECK_PY}"
+        import py_compile
+        py_compile.compile(str(self.CHECK_PY), doraise=True)
+
+    def test_legacy_sh_removed(self):
+        assert not self.CHECK_SH_LEGACY.exists(), \
+            "check_env.sh should have been removed in favor of check_env.py"
+
+
+class TestCrossPlatform:
+    """Windows compatibility contracts."""
+
+    GITATTR = REPO_ROOT / ".gitattributes"
+
+    def test_gitattributes_pins_sh_to_lf(self):
+        assert self.GITATTR.exists(), "missing .gitattributes (Windows CRLF guard)"
+        text = self.GITATTR.read_text()
+        assert "*.sh" in text and "eol=lf" in text, \
+            ".gitattributes must force LF for *.sh files"
+
+    def test_no_python3_in_user_facing_docs(self):
+        """python3.exe does not exist on Windows by default."""
+        roots = [
+            SKILL_MD,
+            REPO_ROOT / "plugins" / "research-collect" / "commands" / "research-collect.md",
+            REFERENCES_DIR / "unpaywall_setup.md",
+        ]
+        for path in roots:
+            text = path.read_text()
+            assert "python3" not in text, \
+                f"{path.name} still references python3 (breaks on Windows)"

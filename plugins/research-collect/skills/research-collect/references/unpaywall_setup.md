@@ -10,7 +10,7 @@
    UNPAYWALL_EMAIL=you@your-uni.edu
    ```
 3. (선행 요건) cloud 모드 활성화 — `ZOTERO_USER_ID` + `ZOTERO_API_KEY` 도 있어야 함. local 모드는 PDF 첨부 자체가 불가능하므로 Unpaywall fallback 도 효과 없음.
-4. `python3 -m research_collect ...` 실행 — stdout 에 `oa_resolved_via_unpaywall: N` 카운트가 표시되면 fallback 이 동작 중
+4. `python -m research_collect ...` 실행 — stdout 에 `oa_resolved_via_unpaywall: N` 카운트가 표시되면 fallback 이 동작 중
 
 ## Unpaywall ToS
 
@@ -25,7 +25,7 @@
 paywall journal 중 publisher OA 또는 preprint 가 있는 DOI 로 테스트:
 
 ```bash
-python3 -c "
+python -c "
 from research_collect.pdf_downloader import resolve_oa_url
 print(resolve_oa_url('10.1038/nature12373', 'you@your-uni.edu'))
 "

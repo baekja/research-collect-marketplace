@@ -15,6 +15,8 @@ Claude Code 세션에서:
 
 ## 최초 설정
 
+### macOS / Linux
+
 ```bash
 git clone https://github.com/baekja/research-collect-marketplace.git
 cd research-collect-marketplace
@@ -23,7 +25,19 @@ cp .env.example .env
 # .env 편집 — cloud 모드 사용 시 ZOTERO_USER_ID·ZOTERO_API_KEY 채우기
 ```
 
-`install.sh` 가 자동으로 `firecrawl-mcp` · `zotero-mcp` 를 등록하고 Python 패키지를 editable 로 설치한다. 자동 설치 실패 시 명령어를 stdout 에 출력 — 수동 실행 가이드를 따른다.
+### Windows (PowerShell)
+
+```powershell
+git clone https://github.com/baekja/research-collect-marketplace.git
+cd research-collect-marketplace
+powershell -ExecutionPolicy Bypass -File plugins\research-collect\scripts\install.ps1
+Copy-Item .env.example .env
+# .env 편집 — cloud 모드 사용 시 ZOTERO_USER_ID·ZOTERO_API_KEY 채우기
+```
+
+> Windows 사전 요구사항: `python --version`, `pip --version`, `claude --version` 이 모두 정상 출력되어야 한다 (PATH 등록 확인). PowerShell 실행 정책이 막혀 있으면 위의 `-ExecutionPolicy Bypass` 가 그 호출에 한해 우회한다.
+
+`install.sh` / `install.ps1` 가 자동으로 `firecrawl-mcp` · `zotero-mcp` 를 등록하고 Python 패키지를 editable 로 설치한다. 자동 설치 실패 시 명령어를 stdout 에 출력 — 수동 실행 가이드를 따른다.
 
 ## 사용 예시
 

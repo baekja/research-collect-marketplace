@@ -1,0 +1,6 @@
+# Shell scripts must stay LF even on Windows clones (CRLF breaks the shebang).
+*.sh text eol=lf
+*.bash text eol=lf
+
+# PowerShell scripts prefer CRLF on Windows but tolerate LF; pin to CRLF for ISE compatibility.
+*.ps1 text eol=crlf

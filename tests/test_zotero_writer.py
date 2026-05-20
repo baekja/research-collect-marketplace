@@ -155,16 +155,18 @@ def test_attach_pdfs_skips_none_pdf():
     zot.attachment_simple.assert_not_called()
 
 
-def test_attach_pdfs_calls_attachment_simple():
+def test_attach_pdfs_calls_attachment_simple(tmp_path):
     zot = MagicMock()
-    results = attach_pdfs(zot, [("ITEM1", "/tmp/x.pdf")])
-    zot.attachment_simple.assert_called_once_with(["/tmp/x.pdf"], "ITEM1")
+    fake_pdf = str(tmp_path / "x.pdf")
+    results = attach_pdfs(zot, [("ITEM1", fake_pdf)])
+    zot.attachment_simple.assert_called_once_with([fake_pdf], "ITEM1")
     assert results[0]["status"] == "attached"
 
 
-def test_attach_pdfs_records_exception():
+def test_attach_pdfs_records_exception(tmp_path):
     zot = MagicMock()
     zot.attachment_simple.side_effect = RuntimeError("403 forbidden")
-    results = attach_pdfs(zot, [("ITEM1", "/tmp/x.pdf")])
+    fake_pdf = str(tmp_path / "x.pdf")
+    results = attach_pdfs(zot, [("ITEM1", fake_pdf)])
     assert results[0]["status"] == "failed"
     assert "RuntimeError" in results[0]["reason"]

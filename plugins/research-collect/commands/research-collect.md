@@ -16,6 +16,6 @@ argument-hint: <검색 키워드> [--collection <이름>] [--limit <N>]
    - `--limit <N>` 가 있으면 가져올 편수 (없으면 10)
 3. **실행**:
    - Step 1 (Search): SKILL.md 의 백엔드 fallback chain 으로 `./data/raw.json` 생성
-   - Step 2 (Register): `python3 -m research_collect --raw data/raw.json --out data/papers --pdf-dir data/pdfs --collection "<컬렉션명>"`
+   - Step 2 (Register): `python -m research_collect --raw data/raw.json --out data/papers --pdf-dir data/pdfs --collection "<컬렉션명>"`
    - Step 3 (Verify): `zotero-mcp` 있으면 최근 5건 조회
 4. **결과 보고**: `[mode: local|cloud]` · 등록 카운트 · PDF 첨부 카운트(cloud만) · OA 검색 카운트

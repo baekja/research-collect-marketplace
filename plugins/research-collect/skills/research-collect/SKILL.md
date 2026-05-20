@@ -30,7 +30,7 @@ description: Use this skill when the user wants to collect academic papers from 
 |------|----------|-------------|
 | 검색 백엔드 (MCP) | 사용 가능한 도구 목록에 `firecrawl_search` · `exa_search` · `brave_web_search` 중 하나라도 있는지 | 없으면 내장 `web_search` 로 fallback (정상) |
 | `zotero-mcp` (검증 단계 전용) | 사용 가능한 도구 목록 | 없으면 Step 3 skip |
-| Python 패키지 | `python3 -c "from research_collect import ingest"` 성공 여부 | 실패 시 `pip install -e .` 안내 |
+| Python 패키지 | `python -c "from research_collect import ingest"` 성공 여부 | 실패 시 `pip install -e .` 안내 |
 | `.env` | `cwd/.env` 또는 환경변수 | 없어도 local 모드로 동작 |
 
 ## Step 1: Search (pluggable backend)
@@ -69,7 +69,7 @@ description: Use this skill when the user wants to collect academic papers from 
 실행 명령 (반드시 이 형태):
 
 ```bash
-python3 -m research_collect \
+python -m research_collect \
     --raw data/raw.json \
     --out data/papers \
     --pdf-dir data/pdfs \
