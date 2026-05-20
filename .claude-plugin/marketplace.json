@@ -10,7 +10,7 @@
       "name": "research-collect",
       "source": "./plugins/research-collect",
       "description": "Pluggable-backend paper collection pipeline: search → normalize → Zotero register, with optional PDF auto-attachment via Unpaywall.",
-      "version": "0.1.0"
+      "version": "0.1.1"
     }
   ]
 }

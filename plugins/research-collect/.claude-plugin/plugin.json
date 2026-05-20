@@ -1,6 +1,6 @@
 {
   "name": "research-collect",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Academic paper collection pipeline with pluggable search backend (firecrawl/exa/brave/web_search) and Zotero registration with optional PDF auto-attachment.",
   "author": {
     "name": "Jang-Woon Baek",
